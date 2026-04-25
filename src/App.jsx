@@ -2,45 +2,41 @@ import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
-  const [showTutorial, setShowTutorial] = useState(false);
   const [activeTab, setActiveTab] = useState('dossie');
+  const [notes, setNotes] = useState('');
+  const [mainSuspect, setMainSuspect] = useState('');
+  
+  // Progress tracker variables
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Checa se o usuário já viu o tutorial
-    const tutorialVisto = localStorage.getItem('tutorial_visto');
-    if (!tutorialVisto) {
-      setShowTutorial(true);
-    }
+    // Load local storage
+    setNotes(localStorage.getItem('user_notes') || '');
+    setMainSuspect(localStorage.getItem('main_suspect') || '');
+    
+    // Simulate reading cross-app local storage flags if they existed
+    let score = 0;
+    if (localStorage.getItem('ev_dna')) score++;
+    if (localStorage.getItem('ev_escuta')) score++;
+    if (localStorage.getItem('ev_boletim')) score++;
+    setProgress(score);
   }, []);
 
-  const closeTutorial = () => {
-    localStorage.setItem('tutorial_visto', 'true');
-    setShowTutorial(false);
-  };
+  const handleNoteChange = (e) => {
+    setNotes(e.target.value);
+    localStorage.setItem('user_notes', e.target.value);
+  }
+
+  const toggleSuspect = (suspectName) => {
+    const newTarget = mainSuspect === suspectName ? '' : suspectName;
+    setMainSuspect(newTarget);
+    localStorage.setItem('main_suspect', newTarget);
+  }
 
   return (
     <div className="app-container">
-      {/* Pop-up Overlay (Glassmorphism) */}
-      {showTutorial && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <h2><span style={{color: '#ff3333'}}>●</span> Bem-vindo Detetive</h2>
-            <p>Você foi contratado para reabrir o caso frio de Araçatins: <strong>O Desaparecimento de Elisa Drummond</strong>, ocorrido em 2009.</p>
-            
-            <h3>Sua Interface de Trabalho</h3>
-            <ul>
-              <li><strong>Arquivos Físicos:</strong> Você precisará dos documentos impressos para começar. Eles contêm pistas de segurança vitais.</li>
-              <li><strong>Sistemas Interativos:</strong> Este hub conectará você aos servidores da Polícia e ao Laboratório de DNA.</li>
-              <li><strong>Consequências:</strong> Você não terá "Game Over". Respostas erradas te aprofundarão nos álibis falsos. Fique atento.</li>
-            </ul>
-            
-            <div className="action-row">
-              <a href="/arquivos-imprimir" className="btn-primary">Baixar Arquivos Confidenciais</a>
-              <button onClick={closeTutorial} className="btn-ghost">Iniciar Investigação</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Immersive Background Audio */}
+      <audio autoPlay loop src="https://cdn.pixabay.com/download/audio/2021/08/09/audio_d07a166aa4.mp3?filename=rain-and-thunder-16705.mp3" style={{display: 'none'}} />
 
       {/* Sidebar Navigation */}
       <aside className="sidebar">
@@ -97,10 +93,30 @@ function App() {
             <div className="glass-panel" style={{gridColumn: '1 / -1', borderLeft: '4px solid var(--accent-blue)'}}>
               <h3 className="panel-title">Quadro de Suspeitos</h3>
               <div style={{display: 'flex', gap: '15px', flexWrap: 'wrap', marginTop: '10px'}}>
-                <div style={{padding: '10px', border: '1px solid #334155', borderRadius: '4px', flex: '1 1 200px'}}><strong>Dr. Lemos</strong> - Pediatra e Tutor. Álibi: Cirurgia de emergência.</div>
-                <div style={{padding: '10px', border: '1px solid #334155', borderRadius: '4px', flex: '1 1 200px'}}><strong>Marcelo Souza</strong> - Ex-marido. Álibi: Bar no Porto Seco.</div>
-                <div style={{padding: '10px', border: '1px solid #334155', borderRadius: '4px', flex: '1 1 200px'}}><strong>Lúcia Fernandes</strong> - Assistente. Álibi: Assistindo TV em casa.</div>
-                <div style={{padding: '10px', border: '1px solid #334155', borderRadius: '4px', flex: '1 1 200px'}}><strong>Beto Graxa</strong> - Borracheiro local. Álibi: Dormindo no pátio.</div>
+                {['Dr. Lemos - Pediatra e Tutor. Álibi: Cirurgia de emergência.',
+                  'Marcelo Souza - Ex-marido. Álibi: Bar no Porto Seco.',
+                  'Lúcia Fernandes - Assistente. Álibi: Assistindo TV em casa.',
+                  'Beto Graxa - Borracheiro local. Álibi: Dormindo no pátio.'].map(suspect => {
+                    const name = suspect.split(' - ')[0];
+                    const isTarget = mainSuspect === name;
+                    return (
+                      <div 
+                        key={name}
+                        onClick={() => toggleSuspect(name)}
+                        style={{
+                          padding: '10px', 
+                          border: isTarget ? '2px solid red' : '1px solid #334155', 
+                          borderRadius: '4px', 
+                          flex: '1 1 200px',
+                          cursor: 'pointer',
+                          backgroundColor: isTarget ? 'rgba(255,0,0,0.1)' : 'transparent',
+                          transition: 'all 0.2s'
+                        }}>
+                        <strong>{name}</strong> - {suspect.split(' - ')[1]}
+                        {isTarget && <div style={{color: 'red', fontSize: '0.8rem', marginTop: '5px'}}>ALVO PRINCIPAL DE INVESTIGAÇÃO</div>}
+                      </div>
+                    )
+                })}
               </div>
               <p style={{color: '#94a3b8', fontSize: '0.9rem', marginTop: '15px'}}>Consulte as fichas em papel para avaliar as TAGS DO CODIS de seus DNAs.</p>
             </div>
@@ -118,18 +134,31 @@ function App() {
             </div>
           )}
 
-          <div className="glass-panel">
-            <h3 className="panel-title">Acesso Rápido a Sistemas</h3>
-            <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
-               <li style={{padding: '10px', borderBottom: '1px solid #334155'}}><a href="../dp17-aracatins/" target="_blank" style={{color: 'var(--accent-blue)', textDecoration: 'none'}}>» DP17 - Inquérito Policial</a></li>
-               <li style={{padding: '10px', borderBottom: '1px solid #334155'}}><a href="../lab-forense-pr/" target="_blank" style={{color: 'var(--accent-blue)', textDecoration: 'none'}}>» LAB Forense - CODIS DNA</a></li>
-               <li style={{padding: '10px'}}><a href="../vozes-do-caso/" target="_blank" style={{color: 'var(--accent-blue)', textDecoration: 'none'}}>» Escuta - Central de Áudios</a></li>
-            </ul>
-          </div>
-
-          <div className="glass-panel">
-            <h3 className="panel-title">Anotações do Detetive</h3>
-            <p style={{color: '#94a3b8', fontStyle: 'italic', fontSize: '0.9rem'}}>Sistema pronto para reabertura de caso. O mandante sempre comete um erro de vaidade na elaboração do crime.</p>
+          <div className="glass-panel" style={{gridColumn: '1 / -1', display: 'flex', gap: '20px'}}>
+            <div style={{flex: 1}}>
+              <h3 className="panel-title">Bloco de Notas da Escrivaninha</h3>
+              <textarea 
+                value={notes}
+                onChange={handleNoteChange}
+                placeholder="Insira notas soltas, inconsistências e suspeitas de álibis aqui..."
+                style={{
+                  width: '100%', 
+                  height: '150px', 
+                  backgroundColor: 'rgba(0,0,0,0.5)', 
+                  border: '1px solid #334155', 
+                  color: '#94a3b8', 
+                  padding: '10px', 
+                  fontFamily: 'var(--font-mono)'
+                }}
+              />
+            </div>
+            <div style={{width: '250px', backgroundColor: 'rgba(0,255,0,0.05)', border: '1px solid rgba(0,255,0,0.2)', padding: '20px'}}>
+              <h3 className="panel-title" style={{color: '#4ade80', borderColor: '#4ade80'}}>PROGRESSO DA INVESTIGAÇÃO</h3>
+              <div style={{fontSize: '2rem', color: '#4ade80', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100px'}}>
+                {progress} / 3
+              </div>
+              <p style={{fontSize: '0.8rem', textAlign: 'center', color: '#94a3b8'}}>Arquivos Ocultos Encontrados</p>
+            </div>
           </div>
         </div>
       </main>
