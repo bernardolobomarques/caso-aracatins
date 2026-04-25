@@ -83,21 +83,53 @@ function App() {
         </header>
         
         <div className="dashboard-grid">
-          <div className="glass-panel" style={{gridColumn: '1 / -1'}}>
-            <h3 className="panel-title">Mesa de Trabalho</h3>
-            <p className="alert-message">
-              ⚠️ Alerta do Sistema: Aguardando preenchimento da base de dados e integração das mídias neurais (DALL-E e ElevenLabs).
-            </p>
+          {activeTab === 'dossie' && (
+            <div className="glass-panel" style={{gridColumn: '1 / -1', borderLeft: '4px solid var(--primary-glow)'}}>
+              <h3 className="panel-title">Dossiê da Vítima: Elisa Drummond</h3>
+              <p><strong>Idade em 2009:</strong> 36 anos.<br/><strong>Ocupação:</strong> Servidora Pública (Prefeitura de Araçatins).<br/><strong>Caso:</strong> 2009-447 (Desaparecimento e Homicídio).</p>
+              <p className="alert-message">
+                ⚠️ Alerta do Sistema: Sugerimos a impressão dos documentos físicos (B.O., Laudos, Fichas). Escaneie os QR Codes impressos para conectar serviços externos (DP17 e DNA).
+              </p>
+            </div>
+          )}
+
+          {activeTab === 'suspeitos' && (
+            <div className="glass-panel" style={{gridColumn: '1 / -1', borderLeft: '4px solid var(--accent-blue)'}}>
+              <h3 className="panel-title">Quadro de Suspeitos</h3>
+              <div style={{display: 'flex', gap: '15px', flexWrap: 'wrap', marginTop: '10px'}}>
+                <div style={{padding: '10px', border: '1px solid #334155', borderRadius: '4px', flex: '1 1 200px'}}><strong>Dr. Lemos</strong> - Pediatra e Tutor. Álibi: Cirurgia de emergência.</div>
+                <div style={{padding: '10px', border: '1px solid #334155', borderRadius: '4px', flex: '1 1 200px'}}><strong>Marcelo Souza</strong> - Ex-marido. Álibi: Bar no Porto Seco.</div>
+                <div style={{padding: '10px', border: '1px solid #334155', borderRadius: '4px', flex: '1 1 200px'}}><strong>Lúcia Fernandes</strong> - Assistente. Álibi: Assistindo TV em casa.</div>
+                <div style={{padding: '10px', border: '1px solid #334155', borderRadius: '4px', flex: '1 1 200px'}}><strong>Beto Graxa</strong> - Borracheiro local. Álibi: Dormindo no pátio.</div>
+              </div>
+              <p style={{color: '#94a3b8', fontSize: '0.9rem', marginTop: '15px'}}>Consulte as fichas em papel para avaliar as TAGS DO CODIS de seus DNAs.</p>
+            </div>
+          )}
+
+          {activeTab === 'timeline' && (
+            <div className="glass-panel" style={{gridColumn: '1 / -1', borderLeft: '4px solid #facc15'}}>
+              <h3 className="panel-title">Linha do Tempo (12 de Nov de 2009)</h3>
+              <ul style={{listStyle: 'none', paddingLeft: '10px', borderLeft: '2px solid #334155'}}>
+                <li style={{marginBottom: '10px'}}><span style={{color: '#facc15', fontWeight: 'bold'}}>Tarde:</span> Elisa e Marcelo brigam agressivamente na praça.</li>
+                <li style={{marginBottom: '10px'}}><span style={{color: '#facc15', fontWeight: 'bold'}}>Noite:</span> Lúcia nota Elisa com comportamento estranho na prefeitura.</li>
+                <li style={{marginBottom: '10px'}}><span style={{color: '#facc15', fontWeight: 'bold'}}>22:30:</span> Hora presumida do desaparecimento. Carro achado abandonado na PR-320 (perto do Porto Seco).</li>
+                <li style={{marginBottom: '10px'}}><span style={{color: '#facc15', fontWeight: 'bold'}}>22:45:</span> Internet GSS da delegacia central cai. (Conforme anotado no B.O.)</li>
+              </ul>
+            </div>
+          )}
+
+          <div className="glass-panel">
+            <h3 className="panel-title">Acesso Rápido a Sistemas</h3>
+            <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+               <li style={{padding: '10px', borderBottom: '1px solid #334155'}}><a href="../dp17-aracatins/" target="_blank" style={{color: 'var(--accent-blue)', textDecoration: 'none'}}>» DP17 - Inquérito Policial</a></li>
+               <li style={{padding: '10px', borderBottom: '1px solid #334155'}}><a href="../lab-forense-pr/" target="_blank" style={{color: 'var(--accent-blue)', textDecoration: 'none'}}>» LAB Forense - CODIS DNA</a></li>
+               <li style={{padding: '10px'}}><a href="../vozes-do-caso/" target="_blank" style={{color: 'var(--accent-blue)', textDecoration: 'none'}}>» Escuta - Central de Áudios</a></li>
+            </ul>
           </div>
 
           <div className="glass-panel">
-            <h3 className="panel-title">Acesso Rápido</h3>
-            <p style={{color: '#94a3b8', fontSize: '0.9rem'}}>Bancos de dados auxiliares serão liberados quando o detetive escanear os QR Codes dos documentos.</p>
-          </div>
-
-          <div className="glass-panel">
-            <h3 className="panel-title">Anotações Recentes</h3>
-            <p style={{color: '#94a3b8', fontStyle: 'italic', fontSize: '0.9rem'}}>Nenhuma anotação gravada no sistema ainda.</p>
+            <h3 className="panel-title">Anotações do Detetive</h3>
+            <p style={{color: '#94a3b8', fontStyle: 'italic', fontSize: '0.9rem'}}>Sistema pronto para reabertura de caso. O mandante sempre comete um erro de vaidade na elaboração do crime.</p>
           </div>
         </div>
       </main>
